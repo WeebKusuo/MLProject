@@ -1,0 +1,92 @@
+## 📌 Notes: Why we write `-e .` in `requirements.txt`
+
+### 🔹 Definition
+
+`-e .` ka matlab hota hai:
+
+> **Install the current project in editable mode**
+
+* `-e` → editable
+* `.` → current directory (project folder)
+
+---
+
+### 🔹 Why we use it?
+
+#### 1. 🔗 Live code updates
+
+* Code change karte hi reflect ho jata hai
+* Dubara install karne ki zarurat nahi
+
+---
+
+#### 2. ⚡ Faster development
+
+* Har change ke baad `pip install .` nahi karna padta
+* Direct testing possible
+
+---
+
+#### 3. 📦 Treat project as a package
+
+* Tumhara project ek package ki tarah behave karta hai
+* Import kar sakte ho anywhere in project
+
+---
+
+#### 4. 🤝 Easy setup for others
+
+* Jab koi run kare:
+
+  ```bash
+  pip install -r requirements.txt
+  ```
+* Dependencies + project dono install ho jate hain
+
+---
+
+### 🔹 Without `-e .`
+
+* Changes reflect nahi honge ❌
+* Baar-baar reinstall karna padega ❌
+
+---
+
+### 🔹 With `-e .`
+
+* Changes instantly reflect honge ✅
+* Smooth development workflow ✅
+
+---
+
+### 🔹 Example
+
+```txt
+numpy
+pandas
+-e .
+```
+
+👉 Installs:
+
+* numpy
+* pandas
+* current project (editable mode)
+
+---
+
+### 🔥 One-line Summary
+
+> `-e .` use karte hain taaki project editable mode me install ho aur development fast & smooth ho
+
+Haan, automatically map hota hai — but through setup.py (ya pyproject.toml)
+
+-e . → pip ko bolta hai:
+"iss folder me jo package defined hai (setup.py me), usko install karo"
+
+
+Final Line
+
+👉 -e . =
+
+current folder ka package install karo, jo setup.py (ya pyproject.toml) me defined hai — editable mode me

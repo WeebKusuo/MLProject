@@ -6,6 +6,7 @@ HYPHEN_E_DOT = '-e .'
 def get_requirements(file_path: str) -> List[str]:
    '''
    this function will return list of requirements
+   as requirements.txt has a list of libraries
    '''
 
    requirements = []
