@@ -1,5 +1,5 @@
 import sys
-
+from src.logger import logging
 def error_message_details(error,error_detail:sys):
     _,_,exc_tb=error_detail.exc_info()  #this will give us the info like on which file the exception has occured on which line no all that info will be stored in this v ariable
     file_name=exc_tb.tb_frame.f_code.co_filename
@@ -16,6 +16,5 @@ class CustomException(Exception):
         return self.error_message    
     
 
-    
 
 
