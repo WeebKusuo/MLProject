@@ -86,7 +86,7 @@ class DataTransformation:
             logging.info(
                 "Applying the preprocessing object on training and testing dataframes "
             )
-
+            #preprocessing sirf inout feature par hi lagti hai 
             input_feature_train_arr=preprocessing_obj.fit_transform(input_feature_train_df)
             input_feature_test_arr=preprocessing_obj.transform(input_feature_test_df)
 
