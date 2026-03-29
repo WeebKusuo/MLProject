@@ -1,1 +1,296 @@
-<h1>WELCOME TO HOME PAGE</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Performance Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0d0d0d;
+            --cream: #f7f4ef;
+            --accent: #e85d3a;
+            --accent2: #3a6ee8;
+            --muted: #8a8580;
+            --border: rgba(13,13,13,0.12);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Geometric background elements */
+        .bg-circle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .bg-circle-1 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(232,93,58,0.08) 0%, transparent 70%);
+            top: -200px; right: -150px;
+            animation: drift 12s ease-in-out infinite alternate;
+        }
+        .bg-circle-2 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(58,110,232,0.07) 0%, transparent 70%);
+            bottom: -150px; left: -100px;
+            animation: drift 15s ease-in-out infinite alternate-reverse;
+        }
+        @keyframes drift {
+            from { transform: translate(0, 0) scale(1); }
+            to   { transform: translate(30px, 20px) scale(1.05); }
+        }
+
+        /* Grid lines texture */
+        .bg-grid {
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(13,13,13,0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13,13,13,0.035) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
+
+        /* Main card */
+        .card {
+            position: relative;
+            width: min(680px, 92vw);
+            padding: 4rem 4.5rem;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            box-shadow:
+                0 2px 4px rgba(0,0,0,0.04),
+                0 8px 24px rgba(0,0,0,0.06),
+                0 32px 64px rgba(0,0,0,0.05);
+            animation: rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(40px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Corner accent */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 60px; height: 60px;
+            border-top: 3px solid var(--accent);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px 0 0 0;
+        }
+        .card::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 60px; height: 60px;
+            border-bottom: 3px solid var(--accent2);
+            border-right: 3px solid var(--accent2);
+            border-radius: 0 0 4px 0;
+        }
+
+        /* Label tag */
+        .label-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #fff5f2;
+            border: 1px solid rgba(232,93,58,0.25);
+            color: var(--accent);
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            padding: 0.35rem 0.9rem;
+            border-radius: 100px;
+            margin-bottom: 2rem;
+            animation: rise 0.9s 0.1s both;
+        }
+        .label-tag .dot {
+            width: 6px; height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%       { opacity: 0.5; transform: scale(0.7); }
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.2rem, 5vw, 3.2rem);
+            color: var(--ink);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            animation: rise 0.9s 0.15s both;
+        }
+        h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--muted);
+            line-height: 1.75;
+            margin-bottom: 3rem;
+            max-width: 440px;
+            font-weight: 400;
+            animation: rise 0.9s 0.2s both;
+        }
+
+        /* Stats row */
+        .stats {
+            display: flex;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 1px solid var(--border);
+            animation: rise 0.9s 0.25s both;
+        }
+        .stat-item { display: flex; flex-direction: column; gap: 0.25rem; }
+        .stat-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: var(--ink);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 500;
+        }
+        .stat-divider {
+            width: 1px;
+            background: var(--border);
+            align-self: stretch;
+        }
+
+        /* CTA Button */
+        .btn-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--ink);
+            color: var(--cream);
+            padding: 1.1rem 2rem;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            animation: rise 0.9s 0.3s both;
+        }
+        .btn-cta::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-101%);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .btn-cta:hover::before { transform: translateX(0); }
+        .btn-cta span, .btn-cta .arrow { position: relative; z-index: 1; }
+        .btn-cta .arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            transition: transform 0.25s ease;
+        }
+        .btn-cta:hover .arrow { transform: translateX(4px); }
+
+        /* Footer note */
+        .footer-note {
+            margin-top: 2rem;
+            font-size: 0.78rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: rise 0.9s 0.35s both;
+        }
+        .footer-note svg { flex-shrink: 0; }
+
+        @media (max-width: 600px) {
+            .card { padding: 2.5rem 2rem; }
+            .stats { gap: 1.5rem; }
+            .stat-num { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+
+    <div class="card">
+        <div class="label-tag">
+            <span class="dot"></span>
+            AI-Powered Tool
+        </div>
+
+        <h1>Predict your <em>exam</em><br>performance</h1>
+
+        <p class="subtitle">
+            Enter a few academic and demographic details — our model analyses the patterns and forecasts your Maths score with precision.
+        </p>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-num">7</span>
+                <span class="stat-label">Input Factors</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">~2s</span>
+                <span class="stat-label">Prediction Time</span>
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-num">ML</span>
+                <span class="stat-label">Powered Model</span>
+            </div>
+        </div>
+
+        <a href="/predictdata" class="btn-cta">
+            <span>Predict My Score</span>
+            <span class="arrow">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </span>
+        </a>
+
+        <p class="footer-note">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <circle cx="7" cy="7" r="6" stroke="#8a8580" stroke-width="1.2"/>
+                <path d="M7 6v4M7 4.5v.5" stroke="#8a8580" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            No personal data is stored. Results are for academic guidance only.
+        </p>
+    </div>
+</body>
+</html>

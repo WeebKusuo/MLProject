@@ -1,189 +1,537 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Student Exam Performance Indicator</title>
-  <style>
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      margin: 0;
-      padding: 0;
-      color: #333;
-    }
-    .login {
-      max-width: 600px;
-      margin: 3rem auto;
-      background: #fff;
-      padding: 2rem 2.5rem;
-      border-radius: 12px;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-    }
-    h1 {
-      text-align: center;
-      color: #444;
-      margin: 0 0 1.2rem 0;
-      font-size: 1.6rem;
-    }
-    legend {
-      font-weight: 600;
-      font-size: 1.3rem;
-    }
-    .mb-3 {
-      margin-bottom: 1rem;
-    }
-    label.form-label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-weight: 500;
-      color: #555;
-    }
-    select.form-control,
-    input.form-control {
-      width: 100%;
-      padding: 0.6rem 0.8rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      box-sizing: border-box;
-      background: #fdfdfd;
-    }
-    select.form-control:focus,
-    input.form-control:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-    }
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 0.7rem 1rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-    .btn-primary {
-      background: #667eea;
-      color: #fff;
-    }
-    .btn-primary:hover {
-      background: #5a6fd8;
-    }
-    h2 {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: #f0f8ff;
-      border-radius: 8px;
-      border-left: 4px solid #667eea;
-      text-align: center;
-      font-size: 1.2rem;
-    }
-    @media (max-width: 500px) {
-      .login {
-        margin: 1rem;
-        padding: 1.5rem;
-      }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Score - Student Analytics</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #0d0d0d;
+            --cream: #f7f4ef;
+            --accent: #e85d3a;
+            --accent2: #3a6ee8;
+            --muted: #8a8580;
+            --border: rgba(13,13,13,0.1);
+            --field-bg: #fafaf8;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--cream);
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 3rem 1rem;
+            position: relative;
+        }
+
+        /* Background textures */
+        .bg-grid {
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(13,13,13,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13,13,13,0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .blob-1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(232,93,58,0.07) 0%, transparent 70%);
+            top: -100px; right: -100px;
+        }
+        .blob-2 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(58,110,232,0.06) 0%, transparent 70%);
+            bottom: 0; left: -100px;
+        }
+
+        /* Layout wrapper */
+        .layout {
+            position: relative;
+            width: min(900px, 100%);
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 0;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.04);
+            overflow: hidden;
+            animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        @keyframes rise {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            background: var(--ink);
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+        .sidebar::after {
+            content: '';
+            position: absolute;
+            bottom: -60px; right: -60px;
+            width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(232,93,58,0.25) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.45);
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.04em;
+            margin-bottom: 2.5rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: #fff; }
+
+        .sidebar-icon {
+            width: 52px; height: 52px;
+            background: var(--accent);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: #fff;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .sidebar p {
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.45);
+            line-height: 1.7;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.1);
+            margin: 2rem 0;
+        }
+
+        .sidebar-steps { display: flex; flex-direction: column; gap: 1.1rem; }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+        }
+        .step-num {
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.5);
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+        .step-item.active .step-num {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .step-text {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.4);
+            line-height: 1.4;
+            font-weight: 400;
+        }
+        .step-item.active .step-text { color: rgba(255,255,255,0.85); font-weight: 500; }
+
+        /* ── MAIN FORM AREA ── */
+        .form-area {
+            padding: 2.5rem 2.5rem 2.5rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-header { margin-bottom: 2rem; }
+
+        .form-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.85rem;
+            color: var(--ink);
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 0.4rem;
+        }
+        .form-header p {
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+
+        /* Section labels */
+        .section-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Field grid */
+        .field-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .field-full { grid-column: span 2; }
+
+        .field-group { display: flex; flex-direction: column; gap: 0.45rem; }
+
+        label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #374151;
+            letter-spacing: 0.01em;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            padding: 0.7rem 0.9rem;
+            background: var(--field-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 6px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.88rem;
+            color: var(--ink);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+            -webkit-appearance: none;
+        }
+
+        /* Custom select arrow */
+        .select-wrap { position: relative; }
+        .select-wrap::after {
+            content: '';
+            position: absolute;
+            right: 0.9rem; top: 50%;
+            transform: translateY(-50%);
+            width: 0; height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid var(--muted);
+            pointer-events: none;
+        }
+
+        select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(232,93,58,0.1);
+            background: #fff;
+        }
+
+        /* Score inputs with visual bar */
+        .score-wrap { position: relative; }
+        .score-wrap input { padding-right: 3rem; }
+        .score-unit {
+            position: absolute;
+            right: 0.9rem; top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        /* Submit button */
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--ink);
+            color: var(--cream);
+            border: none;
+            border-radius: 6px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 0.02em;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-submit::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: var(--accent);
+            transform: translateX(-101%);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .btn-submit:hover::before { transform: translateX(0); }
+        .btn-submit span { position: relative; z-index: 1; }
+        .btn-icon {
+            position: relative; z-index: 1;
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+        }
+
+        /* ── RESULT CARD ── */
+        .result-card {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            animation: popIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.96) translateY(10px); }
+            to   { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .result-score-circle {
+            flex-shrink: 0;
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+        }
+        .result-score-circle .score-num {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: #fff;
+            line-height: 1;
+        }
+        .result-score-circle .score-max {
+            font-size: 0.6rem;
+            color: rgba(255,255,255,0.65);
+            font-weight: 500;
+        }
+
+        .result-text .result-title {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 0.25rem;
+        }
+        .result-text .result-desc {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.3rem;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .result-text .result-sub {
+            margin-top: 0.4rem;
+            font-size: 0.78rem;
+            color: rgba(255,255,255,0.45);
+        }
+
+        /* Responsive */
+        @media (max-width: 680px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .form-area { padding: 2rem 1.5rem; }
+            .field-grid { grid-template-columns: 1fr; }
+            .field-full { grid-column: span 1; }
+        }
+    </style>
 </head>
 <body>
-  <div class="login">
-    <h1>Student Exam Performance Indicator</h1>
+    <div class="bg-grid"></div>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
 
-    <form action="{{ url_for('predict_datapoint') }}" method="post">
-      <legend>Student Exam Performance Prediction</legend>
+    <div class="layout">
 
-      <div class="mb-3">
-        <label class="form-label">Gender</label>
-        <select class="form-control" name="gender" required>
-          <option value="" disabled selected>Select your Gender</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </select>
-      </div>
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <a href=" / " class="back-link">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M9 11L5 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back to Home
+            </a>
 
-      <div class="mb-3">
-        <label class="form-label">Race or Ethnicity</label>
-        <select class="form-control" name="ethnicity" required>
-          <option value="" disabled selected>Select Ethnicity</option>
-          <option value="group A">Group A</option>
-          <option value="group B">Group B</option>
-          <option value="group C">Group C</option>
-          <option value="group D">Group D</option>
-          <option value="group E">Group E</option>
-        </select>
-      </div>
+            <div class="sidebar-icon">📊</div>
+            <h2>Score Predictor</h2>
+            <p>Our model uses 7 key factors to estimate your Maths exam performance.</p>
 
-      <div class="mb-3">
-        <label class="form-label">Parental Level of Education</label>
-        <select class="form-control" name="parental_level_of_education" required>
-          <option value="" disabled selected>Select Parent Education</option>
-          <option value="associate's degree">Associate's degree</option>
-          <option value="bachelor's degree">Bachelor's degree</option>
-          <option value="high school">High school</option>
-          <option value="master's degree">Master's degree</option>
-          <option value="some college">Some college</option>
-          <option value="some high school">Some high school</option>
-        </select>
-      </div>
+            <div class="sidebar-divider"></div>
 
-      <div class="mb-3">
-        <label class="form-label">Lunch Type</label>
-        <select class="form-control" name="lunch" required>
-          <option value="" disabled selected>Select Lunch Type</option>
-          <option value="free/reduced">Free/Reduced</option>
-          <option value="standard">Standard</option>
-        </select>
-      </div>
+            <div class="sidebar-steps">
+                <div class="step-item active">
+                    <div class="step-num">1</div>
+                    <div class="step-text">Fill in your demographics &amp; background</div>
+                </div>
+                <div class="step-item active">
+                    <div class="step-num">2</div>
+                    <div class="step-text">Enter your Reading &amp; Writing scores</div>
+                </div>
+                <div class="step-item">
+                    <div class="step-num">3</div>
+                    <div class="step-text">Get your predicted Maths score instantly</div>
+                </div>
+            </div>
+        </aside>
 
-      <div class="mb-3">
-        <label class="form-label">Test Preparation Course</label>
-        <select class="form-control" name="test_preparation_course" required>
-          <option value="" disabled selected>Select Test Course</option>
-          <option value="none">None</option>
-          <option value="completed">Completed</option>
-        </select>
-      </div>
+        <!-- MAIN FORM -->
+        <div class="form-area">
+            <div class="form-header">
+                <h1>Predict Your Score</h1>
+                <p>Complete all fields for the most accurate prediction.</p>
+            </div>
 
-      <div class="mb-3">
-        <label class="form-label">Reading Score out of 100</label>
-        <input
-          class="form-control"
-          type="number"
-          name="reading_score"
-          placeholder="Enter your Reading score"
-          min="0"
-          max="100"
-          required
-        />
-      </div>
+            <form action="{{ url_for('predict_datapoint') }}" method="post">
 
-      <div class="mb-3">
-        <label class="form-label">Writing Score out of 100</label>
-        <input
-          class="form-control"
-          type="number"
-          name="writing_score"
-          placeholder="Enter your Writing score"
-          min="0"
-          max="100"
-          required
-        />
-      </div>
+                <div class="section-label">Demographics</div>
+                <div class="field-grid" style="margin-bottom:1.5rem">
+                    <div class="field-group">
+                        <label>Gender</label>
+                        <div class="select-wrap">
+                            <select name="gender" required>
+                                <option value="" disabled selected>Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
 
-      <div class="mb-3">
-        <button class="btn btn-primary" type="submit">
-          Predict your Maths Score
-        </button>
-      </div>
-    </form>
+                    <div class="field-group">
+                        <label>Race / Ethnicity</label>
+                        <div class="select-wrap">
+                            <select name="ethnicity" required>
+                                <option value="" disabled selected>Select Group</option>
+                                <option value="group A">Group A</option>
+                                <option value="group B">Group B</option>
+                                <option value="group C">Group C</option>
+                                <option value="group D">Group D</option>
+                                <option value="group E">Group E</option>
+                            </select>
+                        </div>
+                    </div>
 
-    {% if results is not none %}
-      <h2>THE prediction is {{ results }}</h2>
-    {% endif %}
-  </div>
+                    <div class="field-group">
+                        <label>Parental Education</label>
+                        <div class="select-wrap">
+                            <select name="parental_level_of_education" required>
+                                <option value="" disabled selected>Select Level</option>
+                                <option value="associate's degree">Associate's Degree</option>
+                                <option value="bachelor's degree">Bachelor's Degree</option>
+                                <option value="high school">High School</option>
+                                <option value="master's degree">Master's Degree</option>
+                                <option value="some college">Some College</option>
+                                <option value="some high school">Some High School</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Lunch Status</label>
+                        <div class="select-wrap">
+                            <select name="lunch" required>
+                                <option value="" disabled selected>Select Type</option>
+                                <option value="free/reduced">Free / Reduced</option>
+                                <option value="standard">Standard</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-label">Academic Info</div>
+                <div class="field-grid">
+                    <div class="field-group">
+                        <label>Test Prep Course</label>
+                        <div class="select-wrap">
+                            <select name="test_preparation_course" required>
+                                <option value="" disabled selected>Status</option>
+                                <option value="none">Not Completed</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <!-- intentionally empty to maintain grid alignment -->
+                    </div>
+
+                    <div class="field-group">
+                        <label>Reading Score</label>
+                        <div class="score-wrap">
+                            <input type="number" name="reading_score" placeholder="e.g. 85" min="0" max="100" required>
+                            <span class="score-unit">/ 100</span>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label>Writing Score</label>
+                        <div class="score-wrap">
+                            <input type="number" name="writing_score" placeholder="e.g. 78" min="0" max="100" required>
+                            <span class="score-unit">/ 100</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-submit" type="submit">
+                    <span>Generate Score Prediction</span>
+                    <span class="btn-icon">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                            <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                </button>
+
+            </form>
+
+            {% if results is not none %}
+            <div class="result-card">
+                <div class="result-score-circle">
+                    <span class="score-num">{{ results }}</span>
+                    <span class="score-max">/ 100</span>
+                </div>
+                <div class="result-text">
+                    <div class="result-title">Predicted Maths Score</div>
+                    <div class="result-desc">Your estimated score is <strong style="color:#e85d3a">{{ results }}</strong> out of 100.</div>
+                    <div class="result-sub">Based on the factors you provided above.</div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
 </body>
 </html>
